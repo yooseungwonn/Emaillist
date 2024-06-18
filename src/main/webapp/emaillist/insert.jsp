@@ -47,8 +47,7 @@ try {
 if (success){ // INSERT 성공
 	response.sendRedirect(request.getContextPath());
 } else {
-
-		
+	// response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "데이터 입력 중 오류가 발생했습니다.");		
 		%>
 		<h1>Error</h1>
 		<p>데이터 입력 중 오류가 발생하였습니다</p>

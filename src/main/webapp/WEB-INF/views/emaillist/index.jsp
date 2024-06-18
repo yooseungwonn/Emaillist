@@ -1,14 +1,16 @@
 <%@page import="himedia.dao.EmailVo"%>
 <%@page import="java.util.List"%>
+<%@page import="himedia.dao.EmaillistDaoOracleImpl"%>
+<%@page import="himedia.dao.EmaillistDao"%>
+<%@ page import="java.sql.*" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<% 
-// Servlet으로부터 전달한 list 객체 얻어오기
-List<EmailVo> list = null;
-if (request.getAttribute("list") instanceof List){ // 전달 받은 list가 List인지 확인
-	list = (List<EmailVo>)request.getAttribute("list"); // 다음 캐스팅
-}
-%>	
+<%
+//	DB 접속 정보를 컨텍스트 파라미터로부터 받아오기
+ServletContext context = getServletContext();
+String dbuser = context.getInitParameter("dbuser");
+String dbpass = context.getInitParameter("dbpass");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,11 +32,14 @@ function delete_item(event, frm) {
 </head>
 <body>
 	<h1>메일링 리스트</h1>
-	<h3>Model 2 방식</h3>
+	<h3>Model 1 방식</h3>
+<%
+EmaillistDao dao = new EmaillistDaoOracleImpl(dbuser, dbpass);
+List<EmailVo> list = dao.getList();
+
+for (EmailVo vo: list) {
+%>
 	<!-- 리스트 -->
-	<% 
-	for (EmailVo vo: list){	
-	%>
 	<!-- vo 객체의 getter를 이용, 리스트를 표시 -->
 	<table border="1" cellpadding="5" cellspacing="2">
 		<tr>
@@ -56,20 +61,20 @@ function delete_item(event, frm) {
 				onsubmit="delete_item(event, this)">
 				<input type="hidden" 
 					name="no" 
-					value="">
+					value="<%= vo.getNo() %>">
 				<button type="submit">삭제</button>	
 			</form>
 			</td>
 		</tr>
 	</table>
 	<br />
-	<%
-	}
-	%>
 	<!-- /End -->
+<%
+}
+%>
 	<p>
 	<!-- ContextPath를 받아와서 form.jsp에 링크 -->
-		<a href="<%= request.getContextPath() %>/el?a=form">추가 이메일 등록</a>
+		<a href="<%= request.getContextPath() %>/emaillist/form.jsp">추가 이메일 등록</a>
 	</p>
 
 </body>
